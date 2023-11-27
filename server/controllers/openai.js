@@ -66,3 +66,26 @@ export const getOpenAiCode = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const getOpenAiAssist = async (req, res) => {
+  try {
+    const { text } = req.body;
+
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a helpful assistant that serves to only complete a user's thoughts or sentences.",
+        },
+        { role: "user", content: `Finish my thought: ${text}` },
+      ],
+    });
+
+    res.status(200).json({ text: response.choices[0].message.content });
+  } catch (error) {
+    console.error("error", error);
+    res.status(500).json({ error: error.message });
+  }
+};
